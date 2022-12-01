@@ -155,18 +155,19 @@ sapply(birthweight_df, function(x) sum(is.na(x)))
 There are no missing values found in the output. For the better understanding and readability babies sex are modified as Male and Female. There are `r nrow(birthweight_df)` of rows and `r ncol(birthweight_df)`  of colums in the birthweight data frame. Variables were chosen based on the 10 factors that affect a baby's birth weight articles on the internet. 
 
 ```{r}
-model_birthweight_1 = 
+model_proposed = 
     lm(data = birthweight_df , bwt ~ parity + frace + malform + malform + babysex + gaweeks)
 
-model_birthweight_1|> broom::tidy()
+model_proposed|> broom::tidy()
 
 ```
 
 ```{r}
+#  I dont understand why prediction was added and what does it mean? 
 library(modelr)
 birthweight_df %>% 
-  add_residuals(model_birthweight_1)|> 
-  add_predictions(model_birthweight_1) |>  
+  add_residuals(model_1)|> 
+  add_predictions(model_proposed) |>  
   ggplot(aes(x = pred, y = resid)) + 
   geom_point(alpha = 0.3) +
   labs(
@@ -179,13 +180,24 @@ birthweight_df %>%
 
 ```
 
-The residuals "bounce randomly" around the 0 line. This suggests that the assumption that the relationship is linear is reasonable.
-The residuals roughly form a "horizontal band" around the 0 line. This suggests that the variances of the error terms are equal.
-No one residual "stands out" from the basic random pattern of residuals. This suggests that there are no outliers.
+* The residuals "bounce randomly" around the 0 line. This suggests that the assumption that the relationship is linear is reasonable.
+* The residuals roughly form a "horizontal band" around the 0 line. This suggests that the * variances of the error terms are equal.
+* No one residual "stands out" from the basic random pattern of residuals. This suggests that there are no outliers.
+
+* Constant variance assumption does not work here. It means that when I run hypothesis test, i should be aware of non-constant variance.  
 
 ```{r}
+model_1 = 
+    lm(data = birthweight_df , bwt ~ blength + gaweeks)
+
+model_1|> broom::tidy()
 
 
+model_2 =
+    lm(data = birthweight_df, bwt ~ bhead + blength + 
+           babysex + bhead*blength + blength*babysex + 
+           bhead*babysex + bhead*blength*babysex)
 
+model_2|> broom::tidy()
 ```
 
