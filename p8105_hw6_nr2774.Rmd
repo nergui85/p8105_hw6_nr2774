@@ -88,7 +88,6 @@ The point of this is not to say you should always use the bootstrap -- it's poss
 
 ```{r}
 # tidying dataset 
-
 df = read_csv(file = "data/homicide-data.csv") |> 
     janitor::clean_names() |>
     mutate(city_state = str_c(city, state, sep = ","),
@@ -157,20 +156,6 @@ all_state_glm %>%
 
 ### Problem 3
 
-In this problem, you will analyze data gathered to understand the effects of several variables on a child’s birthweight. This dataset, available here, consists of roughly 4000 children and includes the following variables:
-
-Load and clean the data for regression analysis (i.e. convert numeric to factor where appropriate, check for missing data, etc.).
-
-Propose a regression model for birthweight. This model may be based on a hypothesized structure for the factors that underly birthweight, on a data-driven model-building process, or a combination of the two. Describe your modeling process and show a plot of model residuals against fitted values – use add_predictions and add_residuals in making this plot.
-
-Compare your model to two others:
-
-One using length at birth and gestational age as predictors (main effects only)
-One using head circumference, length, sex, and all interactions (including the three-way interaction) between these
-Make this comparison in terms of the cross-validated prediction error; use crossv_mc and functions in purrr as appropriate.
-
-Note that although we expect your model to be reasonable, model building itself is not a main idea of the course and we don’t necessarily expect your model to be “optimal”.
-
 ```{r}
 birthweight_df = 
   read_csv("data/birthweight.csv") |> 
@@ -196,7 +181,7 @@ There are no missing values found in the output. For the better understanding an
 model_proposed = 
     lm(data = birthweight_df , bwt ~ frace + malform + malform + babysex + gaweeks)
 
-model_proposed|> broom::tidy()
+model_proposed |> broom::tidy()
 
 ```
 
@@ -219,19 +204,19 @@ birthweight_df %>%
 
 * The residuals "bounce randomly" around the 0 line. This suggests that the assumption that the relationship is linear is reasonable.
 * The residuals roughly form a "horizontal band" around the 0 line. This suggests that the * variances of the error terms are equal.
-* No one residual "stands out" from the basic random pattern of residuals. This suggests that there are no outliers.
+* Although there are some residual "stands out" from the basic random pattern of residuals. This suggests that there are some outliers.
 
 * Constant variance assumption does not work here. It means that when I run hypothesis test, i should be aware of non-constant variance.  
 
 ```{r}
-# which one is null? both? alternative model is my model? 
 
 model_1 = 
     lm(data = birthweight_df , bwt ~ blength + gaweeks)
 
 model_1|> broom::tidy()
 
-# Interactions
+
+# Interaction effect
 model_2 =
     lm(data = birthweight_df, bwt ~ bhead + blength + 
            babysex + bhead*blength + blength*babysex + 
@@ -279,3 +264,4 @@ cv_df %>%
 
 ```
 
+According to the RMSE plot, model 11 appears to be the best match compored to other two models with the lowest RSME value. Model_proposed performs the worst for this data ended up having the highest RMSE.
